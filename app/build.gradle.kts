@@ -26,6 +26,13 @@ android {
             )
         }
     }
+
+    packagingOptions {
+        exclude ("META-INF/INDEX.LIST")
+        exclude ("META-INF/io.netty.versions.properties")
+    }
+
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -41,6 +48,7 @@ dependencies {
     implementation ("com.hivemq:hivemq-mqtt-client:1.3.0")
     implementation ("org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5")
     implementation ("androidx.cardview:cardview:1.0.0")
+    implementation ("com.google.android.material:material:1.6.0")
 
     implementation(libs.appcompat)
     implementation(libs.material)

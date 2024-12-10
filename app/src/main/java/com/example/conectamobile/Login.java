@@ -36,14 +36,15 @@ public class Login extends AppCompatActivity {
         loginButton = findViewById(R.id.loginButton);
         registerTextView = findViewById(R.id.registerTextView);
 
-        // Establecer el comportamiento del botón de inicio de sesión
-        loginButton.setOnClickListener(view -> loginUser());
-
         // Si el usuario ya está logueado, redirigir a la pantalla principal
-        if (mAuth.getCurrentUser() != null) {
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user != null) {
             // El usuario ya está autenticado
             navigateToMainActivity();
         }
+
+        // Establecer el comportamiento del botón de inicio de sesión
+        loginButton.setOnClickListener(view -> loginUser());
 
         // Comportamiento del texto para registrarse (Redirigir a la actividad de registro)
         registerTextView.setOnClickListener(v -> {
@@ -89,7 +90,7 @@ public class Login extends AppCompatActivity {
     // Método para redirigir a la pantalla principal (si el login es exitoso)
     private void navigateToMainActivity() {
         // Redirigir a la actividad principal después de un inicio de sesión exitoso
-        Intent intent = new Intent(Login.this, MainActivity.class); // Cambia MainActivity por la actividad principal que deseas
+        Intent intent = new Intent(Login.this, MainActivity.class);
         startActivity(intent);
         finish(); // Finaliza la actividad de login
     }

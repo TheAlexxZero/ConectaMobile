@@ -1,24 +1,38 @@
 package com.example.conectamobile;
 
+import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
+
+    private BottomNavigationView bottomNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
+
+        bottomNavigationView = findViewById(R.id.bottomNavigation);
+
+        bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
+            String title = item.getTitle().toString();  // Obtener el título del item
+
+            // Usar el título del item para redirigir a las actividades correspondientes
+            switch (title) {
+                case "Perfil":
+                    startActivity(new Intent(MainActivity.this, Perfil.class));
+                    return true;
+                case "Chat":
+                    startActivity(new Intent(MainActivity.this, ChatActivity.class));
+                    return true;
+                case "Contactos":
+                    startActivity(new Intent(MainActivity.this, ContactsActivity.class));
+                    return true;
+                default:
+                    return false;
+            }
         });
     }
 }
