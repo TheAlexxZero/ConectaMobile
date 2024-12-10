@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "205058178402",
+    "project_id": "chatserver-26e81",
+    "storage_bucket": "chatserver-26e81.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:205058178402:android:45261395f820f27afc803b",
+        "android_client_info": {
+          "package_name": "chat.android.ev"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_TT0VZveUKrsJP1nVAKZQjDXY8BxH9CA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:205058178402:android:61567829985671b3fc803b",
+        "android_client_info": {
+          "package_name": "com.example.conectamobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_TT0VZveUKrsJP1nVAKZQjDXY8BxH9CA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

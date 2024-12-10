@@ -1,0 +1,5 @@
+<!-- chat_background.xml -->
+<gradient xmlns:android="http://schemas.android.com/apk/res/android"
+    android:startColor="#00BFFF"
+    android:endColor="#00008B"
+    android:angle="90" />
