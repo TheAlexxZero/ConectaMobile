@@ -53,35 +53,75 @@ public class ContactsActivity extends AppCompatActivity {
         userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         // Cargar contactos desde Firebase
-        loadContactsFromFirebase();
+        loadContactsFromFirebase("");
 
         // Configurar el botón para agregar un nuevo contacto
         addContactButton.setOnClickListener(v -> {
             Intent intent = new Intent(ContactsActivity.this, AddContactActivity.class);
             startActivityForResult(intent, REQUEST_ADD_CONTACT);
         });
+
+        // Configurar el SearchView para la búsqueda de contactos
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                loadContactsFromFirebase(query); // Filtrar contactos
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                loadContactsFromFirebase(newText); // Filtrar contactos en tiempo real
+                return true;
+            }
+        });
     }
 
-    private void loadContactsFromFirebase() {
-        databaseReference.child("users").child(userId).child("contacts")
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        contactList.clear();
-                        for (DataSnapshot contactSnapshot : snapshot.getChildren()) {
-                            Contact contact = contactSnapshot.getValue(Contact.class);
-                            contactList.add(contact);
+    // Modificada para filtrar contactos según la búsqueda
+    private void loadContactsFromFirebase(String query) {
+        // Si no hay consulta, cargar todos los contactos
+        DatabaseReference queryRef = databaseReference.child("users").child(userId).child("contacts");
+
+        if (!query.isEmpty()) {
+            queryRef.orderByChild("name").startAt(query).endAt(query + "\uf8ff")
+                    .addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            contactList.clear();
+                            for (DataSnapshot contactSnapshot : snapshot.getChildren()) {
+                                Contact contact = contactSnapshot.getValue(Contact.class);
+                                contactList.add(contact);
+                            }
+                            adapter.notifyDataSetChanged();
                         }
-                        adapter.notifyDataSetChanged();
-                    }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        Toast.makeText(ContactsActivity.this, "Error al cargar contactos", Toast.LENGTH_SHORT).show();
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            Toast.makeText(ContactsActivity.this, "Error al cargar contactos", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        } else {
+            // Si no hay consulta, cargar todos los contactos
+            queryRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    contactList.clear();
+                    for (DataSnapshot contactSnapshot : snapshot.getChildren()) {
+                        Contact contact = contactSnapshot.getValue(Contact.class);
+                        contactList.add(contact);
                     }
-                });
+                    adapter.notifyDataSetChanged();
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Toast.makeText(ContactsActivity.this, "Error al cargar contactos", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
+    // Maneja la adición de un nuevo contacto
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

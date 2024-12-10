@@ -3,80 +3,82 @@ package com.example.conectamobile;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder> {
 
-    private List<Message> messages;  // Lista de objetos Message
+    private List<Message> messageList = new ArrayList<>();
 
-    public MessageAdapter() {
-        messages = new ArrayList<>();
+    public void addMessage(Message message) {
+        messageList.add(message);
+        notifyItemInserted(messageList.size() - 1);
     }
 
-    // Este método crea una nueva vista para cada elemento del RecyclerView
     @Override
     public MessageViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        // Inflar el layout item_message.xml
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_message, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message, parent, false);
         return new MessageViewHolder(view);
     }
 
-    // Este método es llamado para mostrar el contenido en cada elemento
     @Override
     public void onBindViewHolder(MessageViewHolder holder, int position) {
-        Message message = messages.get(position);
-        holder.messageTextView.setText(message.getMessage());  // Asignar el mensaje al TextView
-        holder.senderTextView.setText(message.getSender());    // Asignar el remitente al TextView
-    }
+        Message message = messageList.get(position);
+        holder.nicknameTextView.setText(message.getNickname());
+        holder.messageTextView.setText(message.getMessage());
 
-    // Este método retorna el tamaño de la lista de mensajes
-    @Override
-    public int getItemCount() {
-        return messages.size();
-    }
-
-    // Método para añadir un mensaje a la lista
-    public void addMessage(Message message) {
-        messages.add(message);
-        notifyItemInserted(messages.size() - 1);  // Notificar que se insertó un nuevo mensaje
-    }
-
-    // ViewHolder que mantiene la referencia del CardView y sus TextViews
-    public static class MessageViewHolder extends RecyclerView.ViewHolder {
-        CardView cardView;
-        TextView messageTextView;
-        TextView senderTextView;
-
-        public MessageViewHolder(View itemView) {
-            super(itemView);
-            messageTextView = itemView.findViewById(R.id.messageTextView);
-            senderTextView = itemView.findViewById(R.id.senderTextView);
+        // Cargar la foto de perfil usando Glide
+        if (message.getPhotoUrl() != null && !message.getPhotoUrl().isEmpty()) {
+            Glide.with(holder.itemView.getContext()).load(message.getPhotoUrl()).into(holder.profileImageView);
         }
     }
 
-    // Clase Message para almacenar el mensaje y el remitente
+    @Override
+    public int getItemCount() {
+        return messageList.size();
+    }
+
     public static class Message {
         private String message;
-        private String sender;
+        private String nickname;
+        private String photoUrl;
 
-        public Message(String message, String sender) {
+        public Message(String message, String nickname, String photoUrl) {
             this.message = message;
-            this.sender = sender;
+            this.nickname = nickname;
+            this.photoUrl = photoUrl;
         }
 
         public String getMessage() {
             return message;
         }
 
-        public String getSender() {
-            return sender;
+        public String getNickname() {
+            return nickname;
+        }
+
+        public String getPhotoUrl() {
+            return photoUrl;
+        }
+    }
+
+    public static class MessageViewHolder extends RecyclerView.ViewHolder {
+        TextView nicknameTextView;
+        TextView messageTextView;
+        ImageView profileImageView;
+
+        public MessageViewHolder(View itemView) {
+            super(itemView);
+            nicknameTextView = itemView.findViewById(R.id.nicknameTextView);
+            messageTextView = itemView.findViewById(R.id.messageTextView);
+            profileImageView = itemView.findViewById(R.id.profileImageView);
         }
     }
 }

@@ -36,14 +36,14 @@
         android:hint="Nickname"
         android:inputType="textPersonName"
         android:padding="8dp"
-        android:layout_marginTop="16dp" /> <!-- Cambié marginTop por layout_marginTop -->
+        android:layout_marginTop="16dp" />
 
     <!-- Botón Guardar -->
     <Button
-        android:id="@+id/saveButton"
+        android:id="@+id/btnguardar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Guardar Cambios"
-        android:layout_marginTop="16dp" /> <!-- Cambié marginTop por layout_marginTop -->
+        android:layout_marginTop="16dp" />
 
 </LinearLayout>

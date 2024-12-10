@@ -44,11 +44,14 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:33.6.0"))
     implementation("com.google.firebase:firebase-auth")
     implementation ("com.github.bumptech.glide:glide:4.15.1")
-    annotationProcessor ("com.github.bumptech.glide:compiler:4.15.1")
+    implementation("com.squareup.picasso:picasso:2.71828")
+    //annotationProcessor ("com.github.bumptech.glide:compiler:4.15.1")
     implementation ("com.hivemq:hivemq-mqtt-client:1.3.0")
     implementation ("org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5")
     implementation ("androidx.cardview:cardview:1.0.0")
-    implementation ("com.google.android.material:material:1.6.0")
+    implementation ("com.google.android.material:material:1.9.0")
+    implementation ("androidx.activity:activity-ktx:1.7.2")  // O la versión más reciente disponible
+    implementation ("androidx.fragment:fragment-ktx:1.5.5")  // O la versión más reciente disponible
 
     implementation(libs.appcompat)
     implementation(libs.material)

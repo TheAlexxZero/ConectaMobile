@@ -2,6 +2,7 @@ package com.example.conectamobile;
 
 import android.content.Intent;
 import android.os.Bundle;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -17,21 +18,19 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationView = findViewById(R.id.bottomNavigation);
 
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
-            String title = item.getTitle().toString();  // Obtener el título del item
+            int id = item.getItemId();
 
-            // Usar el título del item para redirigir a las actividades correspondientes
-            switch (title) {
-                case "Perfil":
-                    startActivity(new Intent(MainActivity.this, Perfil.class));
-                    return true;
-                case "Chat":
-                    startActivity(new Intent(MainActivity.this, ChatActivity.class));
-                    return true;
-                case "Contactos":
-                    startActivity(new Intent(MainActivity.this, ContactsActivity.class));
-                    return true;
-                default:
-                    return false;
+            if (id == R.id.nav_profile) {
+                startActivity(new Intent(MainActivity.this, ProfileActivity.class));
+                return true;
+            } else if (id == R.id.nav_chat) {
+                startActivity(new Intent(MainActivity.this, ChatActivity.class));
+                return true;
+            } else if (id == R.id.nav_contacts) {
+                startActivity(new Intent(MainActivity.this, ContactsActivity2.class));
+                return true;
+            } else {
+                return false;
             }
         });
     }

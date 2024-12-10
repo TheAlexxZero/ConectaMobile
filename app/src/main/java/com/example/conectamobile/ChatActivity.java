@@ -9,6 +9,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
@@ -22,11 +25,12 @@ public class ChatActivity extends AppCompatActivity {
     private MessageAdapter messageAdapter;
     private TextInputLayout messageInputLayout;
     private String topic = "chat/messages"; // Define tu tema de MQTT
+    private DatabaseReference databaseReference;  // Firebase reference
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.chat_activity);  // Asegúrate de que el layout se llama chat_activity
+        setContentView(R.layout.chat_activity);
 
         // Inicializar la vista
         messagesRecyclerView = findViewById(R.id.messagesRecyclerView);
@@ -56,19 +60,20 @@ public class ChatActivity extends AppCompatActivity {
             mqttClient.setCallback(new MqttCallback() {
                 @Override
                 public void connectionLost(Throwable cause) {
-                    // Manejar la pérdida de conexión
                     runOnUiThread(() -> Toast.makeText(ChatActivity.this, "Conexión perdida", Toast.LENGTH_SHORT).show());
                 }
 
                 @Override
                 public void messageArrived(String topic, MqttMessage message) throws Exception {
-                    // Manejar la llegada de un nuevo mensaje
                     String receivedMessage = new String(message.getPayload());
-                    // Suponiendo que el remitente es un nombre estático (puedes cambiarlo con lógica real)
-                    String sender = "Usuario";  // Aquí deberías extraer el remitente de alguna manera
+                    String sender = "Usuario";  // Este sería el nickname del remitente, puedes obtenerlo de alguna forma
+                    String defaultPhotoUrl = "https://example.com/default-profile-photo.jpg";  // URL predeterminada de la foto de perfil
 
-                    // Crear un objeto Message con el mensaje recibido y el remitente
-                    MessageAdapter.Message newMessage = new MessageAdapter.Message(receivedMessage, sender);
+                    // Crear un objeto Message con el mensaje recibido, el nickname y la URL de la foto de perfil
+                    MessageAdapter.Message newMessage = new MessageAdapter.Message(receivedMessage, sender, defaultPhotoUrl);
+
+                    // Guardar el mensaje en Firebase
+                    saveMessageToFirebase(newMessage);
 
                     runOnUiThread(() -> {
                         // Agregar el mensaje recibido al RecyclerView
@@ -89,6 +94,9 @@ public class ChatActivity extends AppCompatActivity {
             e.printStackTrace();
             Toast.makeText(this, "Error al conectar con el broker", Toast.LENGTH_SHORT).show();
         }
+
+        // Inicializar la referencia de Firebase
+        databaseReference = FirebaseDatabase.getInstance().getReference("messages");
     }
 
     private void sendMessage() {
@@ -101,6 +109,15 @@ public class ChatActivity extends AppCompatActivity {
 
                 // Publicar el mensaje en el tema
                 mqttClient.publish(topic, mqttMessage);
+
+                // Crear un objeto Message
+                String sender = "Tú";  // Este es el nickname del usuario, lo puedes obtener de Firebase
+                String defaultPhotoUrl = "https://example.com/default-profile-photo.jpg";  // URL predeterminada de la foto de perfil
+                MessageAdapter.Message newMessage = new MessageAdapter.Message(message, sender, defaultPhotoUrl);
+
+                // Guardar el mensaje en Firebase
+                saveMessageToFirebase(newMessage);
+
                 messageInputLayout.getEditText().setText(""); // Limpiar el campo de texto
             } catch (Exception e) {
                 e.printStackTrace();
@@ -108,6 +125,18 @@ public class ChatActivity extends AppCompatActivity {
             }
         } else {
             Toast.makeText(this, "Por favor, escribe un mensaje", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void saveMessageToFirebase(MessageAdapter.Message message) {
+        // Obtener una nueva clave para el mensaje
+        String messageId = databaseReference.push().getKey();
+
+        // Guardar el mensaje en Firebase con el ID generado
+        if (messageId != null) {
+            databaseReference.child(messageId).setValue(message)
+                    .addOnSuccessListener(aVoid -> Toast.makeText(ChatActivity.this, "Mensaje guardado en Firebase", Toast.LENGTH_SHORT).show())
+                    .addOnFailureListener(e -> Toast.makeText(ChatActivity.this, "Error al guardar mensaje", Toast.LENGTH_SHORT).show());
         }
     }
 

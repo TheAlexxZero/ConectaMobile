@@ -1,50 +1,47 @@
 package com.example.conectamobile;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 public class AddContactActivity extends AppCompatActivity {
 
-    private EditText contactName, contactEmail;
-    private Button saveContactButton;
+    private EditText nameEditText, emailEditText;
+    private Button saveButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.addcontact_activity);
+        setContentView(R.layout.addcontact_activity);  // Aquí debes tener el diseño XML adecuado
 
-        // Inicializar las vistas
-        contactName = findViewById(R.id.contactName);
-        contactEmail = findViewById(R.id.contactEmail);
-        saveContactButton = findViewById(R.id.saveContactButton);
+        nameEditText = findViewById(R.id.nameEditText);
+        emailEditText = findViewById(R.id.emailEditText);
+        saveButton = findViewById(R.id.saveButton);
 
-        // Configurar el botón para guardar el contacto
-        saveContactButton.setOnClickListener(v -> saveContact());
-    }
+        saveButton.setOnClickListener(v -> {
+            String name = nameEditText.getText().toString().trim();
+            String email = emailEditText.getText().toString().trim();
 
-    private void saveContact() {
-        String name = contactName.getText().toString().trim();
-        String email = contactEmail.getText().toString().trim();
+            // Verificar si los campos están vacíos
+            if (name.isEmpty() || email.isEmpty()) {
+                Toast.makeText(AddContactActivity.this, "Por favor, llena todos los campos", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
-        if (name.isEmpty() || email.isEmpty()) {
-            // Mostrar un mensaje si faltan datos
-            Toast.makeText(this, "Por favor, ingresa todos los datos.", Toast.LENGTH_SHORT).show();
-        } else {
-            // Aquí agregarías el contacto a la base de datos (Firebase, por ejemplo)
-            // Por ahora, solo mostramos un mensaje
-            Toast.makeText(this, "Contacto agregado: " + name, Toast.LENGTH_SHORT).show();
-
-            // Regresar a la actividad anterior con el nuevo contacto (o actualizar la lista)
+            // Crear un intent con los datos
             Intent resultIntent = new Intent();
             resultIntent.putExtra("name", name);
             resultIntent.putExtra("email", email);
-            setResult(RESULT_OK, resultIntent);
+
+            // Establecer el resultado de la actividad y regresar
+            setResult(Activity.RESULT_OK, resultIntent);
             finish();
-        }
+        });
     }
 }
